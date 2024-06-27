@@ -1,0 +1,8 @@
+#+title: Attention
+
+Project Objectives
+- Deliver notifications whenever a user is engaging in "unproductive" activities (i.e. using discord or smth)
+- Be fast/low overhead
+- Give pomodoro functionality built in
+- Provide visualization utilities to help understand work behavior better
+- Menu Bar integration (maybe?)
