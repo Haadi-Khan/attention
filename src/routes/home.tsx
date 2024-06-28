@@ -1,22 +1,39 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from "@tauri-apps/api/window";
 
 import React from "react";
 
 const Home: React.FC = () => {
   const [activeWindow, setActiveWindow] = useState("");
+  const [shouldListen, setShouldListen] = useState(() => {
+    const saved = localStorage.getItem("shouldListen");
+    return saved === "true";
+  });
+
+  async function toggleListen() {
+    setShouldListen(!shouldListen);
+    console.log(shouldListen);
+  }
 
   useEffect(() => {
-    const unlisten = appWindow.listen("active-window-update", (event) => {
-      console.log(event.payload);
-      setActiveWindow(event.payload as string);
-    });
+    localStorage.setItem("shouldListen", shouldListen.toString());
+    let unlisten: () => void | undefined;
+
+    if (shouldListen) {
+      (async () => {
+        unlisten = await appWindow.listen("active-window-update", (event) => {
+          console.log(event.payload);
+          setActiveWindow(event.payload as string);
+        });
+      })();
+    }
 
     return () => {
-      unlisten.then((f) => f());
+      if (unlisten) {
+        unlisten();
+      }
     };
-  }, []);
+  }, [shouldListen]);
 
   return (
     <div className="relative">
@@ -26,6 +43,9 @@ const Home: React.FC = () => {
 
       <div className="absolute h-full w-full m-10">
         <div>
+          <button className="bg-primary p-2 rounded-lg" onClick={toggleListen}>
+            Toggle Listening
+          </button>
           <div className="flex flex-col">
             <p className="text-primary">{activeWindow}</p>
           </div>

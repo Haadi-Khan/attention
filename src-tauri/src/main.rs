@@ -1,19 +1,25 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use active_win_pos_rs::{get_active_window, ActiveWindow};
+use active_win_pos_rs::get_active_window;
 use notify_rust::Notification;
 use tauri::{async_runtime::spawn, Manager};
 use tokio::time::{self, Duration};
 
 #[tauri::command]
 fn active_window() -> String {
-    let window: Result<ActiveWindow, _> = get_active_window();
-
-    match window {
+    match get_active_window() {
         Ok(window) => window.title,
         Err(_e) => "Error".to_string(),
     }
+}
+
+fn send_notification(title: &str, message: &str) {
+    Notification::new()
+        .summary(title)
+        .body(message)
+        .show()
+        .unwrap();
 }
 
 async fn monitor_active_window(app: tauri::AppHandle) {
@@ -21,6 +27,7 @@ async fn monitor_active_window(app: tauri::AppHandle) {
     loop {
         interval.tick().await;
         let window_title = active_window();
+        send_notification("Attention", &window_title);
         app.emit_all("active-window-update", window_title).unwrap();
     }
 }

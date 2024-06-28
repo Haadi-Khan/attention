@@ -5,6 +5,7 @@ import clsx from "clsx";
 export default function Layout() {
   const location = useLocation();
 
+  // Repeated Tailwind classes
   const selectedClass = "text-primary";
   const defaultClass = "w-10 h-7";
   const linkClass = "hover:text-primary w-10 h-10";

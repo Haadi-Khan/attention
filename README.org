@@ -1,8 +1,26 @@
 #+title: Attention
 
-Project Objectives
+* Project Objectives
 - Deliver notifications whenever a user is engaging in "unproductive" activities (i.e. using discord or smth)
 - Be fast/low overhead
 - Give pomodoro functionality built in
 - Provide visualization utilities to help understand work behavior better
 - Menu Bar integration (maybe?)
+
+* Building
+** Python
+Create a venv and install the requirements with
+#+begin_src
+pip install -r requirements.txt
+#+end_src
+
+** Rust
+#+begin_src
+cargo install
+#+end_src
+
+** Web
+#+begin_src
+pnpm install
+pnpm tauri dev
+#+end_src
