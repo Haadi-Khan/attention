@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./layout";
 import ErrorPage from "./error-page";
 import Home from "./routes/home";
+import Report from "./routes/report";
 import Settings from "./routes/settings";
 import { TauriProvider } from "./context/TauriProvider";
 import "./styles.css";
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "/settings",
         element: <Settings />,
+      },
+      {
+        path: "/report",
+        element: <Report />,
       },
     ],
   },
