@@ -1,9 +1,9 @@
 title_name,label
-discord,True
-emacs,False
-spark,False
-slack,False
-music,True
-spotify,True
-messages,True
-activity monitor,False
+discord,1
+emacs,0
+spark,0
+slack,0
+music,0
+spotify,0
+messages,1
+activity monitor,0

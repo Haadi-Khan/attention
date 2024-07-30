@@ -1,15 +1,19 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use active_win_pos_rs::get_active_window;
+use active_win_pos_rs as aw;
+use std::fs::OpenOptions;
+use std::fs::File;
+use std::io::Read;
+use std::io::Write;
 use notify_rust::Notification;
 use tauri::{async_runtime::spawn, Manager};
 use tokio::time::{self, Duration};
 
 #[tauri::command]
 fn active_window() -> String {
-    match get_active_window() {
-        Ok(window) => window.title,
+    match aw::get_active_window() {
+        Ok(window) => format!("{}",window.title.as_str()),
         Err(_e) => "Error".to_string(),
     }
 }
@@ -23,12 +27,32 @@ fn send_notification(title: &str, message: &str) {
 }
 
 async fn monitor_active_window(app: tauri::AppHandle) {
-    let mut interval = time::interval(Duration::from_secs(1));
+    let mut interval = time::interval(Duration::from_secs(5));
+    let mut data_file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .append(true)
+            .open("distractions.csv")
+            .expect("cannot open file");
+
     loop {
         interval.tick().await;
-        let window_title = active_window();
-        send_notification("Attention", &window_title);
-        app.emit_all("active-window-update", window_title).unwrap();
+        let active_window = active_window();
+        send_notification("Attention", &active_window);
+        
+        let csv_str = format!("{},1\n", active_window);
+        let mut contents = String::new();
+
+        data_file.read_to_string(&mut contents).expect("read failed");
+
+        if !contents.contains(&csv_str) {
+            data_file
+                .write(csv_str.as_bytes())
+                .expect("write failed");
+        }
+
+        app.emit_all("active-window-update", &active_window).unwrap();
     }
 }
 
