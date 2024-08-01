@@ -9,6 +9,7 @@ use std::io::Write;
 use notify_rust::Notification;
 use tauri::{async_runtime::spawn, Manager};
 use tokio::time::{self, Duration};
+mod db;
 
 #[tauri::command]
 fn active_window() -> String {

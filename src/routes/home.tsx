@@ -22,7 +22,6 @@ const Home: React.FC = () => {
     localStorage.setItem("shouldListen", shouldListen.toString());
     let unlisten: () => void | undefined;
 
-    // triggers the rust backend for productivity tracking
     if (shouldListen) {
       (async () => {
         unlisten = await appWindow.listen("active-window-update", (event) => {
@@ -53,7 +52,7 @@ const Home: React.FC = () => {
 
         <div className="w-1/2 p-4">
           <Monitor shouldListen={shouldListen} toggleListen={toggleListen} />
-          <br/>
+          <br />
           <QuickStart />
         </div>
       </div>
