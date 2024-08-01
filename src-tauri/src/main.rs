@@ -28,29 +28,30 @@ fn send_notification(title: &str, message: &str) {
 
 async fn monitor_active_window(app: tauri::AppHandle) {
     let mut interval = time::interval(Duration::from_secs(5));
-    let mut data_file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .append(true)
-            .open("distractions.csv")
-            .expect("cannot open file");
+    // let mut data_file = OpenOptions::new()
+    //         .read(true)
+    //         .write(true)
+    //         .create(true)
+    //         .append(true)
+    //         .open("distractions.csv")
+    //         .expect("cannot open file");
 
     loop {
         interval.tick().await;
         let active_window = active_window();
-        send_notification("Attention", &active_window);
+        // send_notification("Attention", &active_window);
         
-        let csv_str = format!("{},1\n", active_window);
-        let mut contents = String::new();
+        // Writing to file
+        // let csv_str = format!("{},1\n", active_window);
+        // let mut contents = String::new();
 
-        data_file.read_to_string(&mut contents).expect("read failed");
+        // data_file.read_to_string(&mut contents).expect("read failed");
 
-        if !contents.contains(&csv_str) {
-            data_file
-                .write(csv_str.as_bytes())
-                .expect("write failed");
-        }
+        // if !contents.contains(&csv_str) {
+        //     data_file
+        //         .write(csv_str.as_bytes())
+        //         .expect("write failed");
+        // }
 
         app.emit_all("active-window-update", &active_window).unwrap();
     }

@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { appWindow } from "@tauri-apps/api/window";
 
 import React from "react";
+import Today from "./home/today";
+import Upcoming from "./home/upcoming";
+import QuickStart from "./home/quick_start";
+import Monitor from "./home/monitor";
 
 const Home: React.FC = () => {
   const [activeWindow, setActiveWindow] = useState("");
@@ -12,17 +16,16 @@ const Home: React.FC = () => {
 
   async function toggleListen() {
     setShouldListen(!shouldListen);
-    console.log(shouldListen);
   }
 
   useEffect(() => {
     localStorage.setItem("shouldListen", shouldListen.toString());
     let unlisten: () => void | undefined;
 
+    // triggers the rust backend for productivity tracking
     if (shouldListen) {
       (async () => {
         unlisten = await appWindow.listen("active-window-update", (event) => {
-          console.log(event.payload);
           setActiveWindow(event.payload as string);
         });
       })();
@@ -36,19 +39,22 @@ const Home: React.FC = () => {
   }, [shouldListen]);
 
   return (
-    <div className="relative">
-      <div className="absolute w-full h-20">
-        <h1 className="text-lg text-center">Attention</h1>
+    <div className="relative p-10">
+      <div className="w-full h-20 mb-10 text-center">
+        <h1 className="text-2xl font-bold">Sessions</h1>
       </div>
 
-      <div className="absolute h-full w-full m-10">
-        <div>
-          <button className="bg-primary p-2 rounded-lg" onClick={toggleListen}>
-            Toggle Listening
-          </button>
-          <div className="flex flex-col">
-            <p className="text-primary">{activeWindow}</p>
-          </div>
+      <div className="flex justify-between">
+        <div className="w-1/2 p-4">
+          <Today />
+          <br />
+          <Upcoming />
+        </div>
+
+        <div className="w-1/2 p-4">
+          <Monitor shouldListen={shouldListen} toggleListen={toggleListen} />
+          <br/>
+          <QuickStart />
         </div>
       </div>
     </div>
